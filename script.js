@@ -1,70 +1,23 @@
-const form = document.querySelector("form"),
-  fileInput = document.querySelector(".file-input"),
-  progressArea = document.querySelector(".progress-area"),
-  uploadedArea = document.querySelector(".uploaded-area");
-
-form.addEventListener("click", () => {
-  fileInput.click();
-});
-
-fileInput.onchange = ({target}) => {
-  const file = target.files[0];
-  if (file) {
-    let reader = new FileReader();
-    reader.readAsDataURL(file);
-
-    reader.onload = function (e) {
-      const thumbnail = e.target.result;
-      uploadFile(file.name, thumbnail);
-    };
-  }
-};
-
-function uploadFile(name, thumbnail) {
-  let xhr = new XMLHttpRequest();
-  xhr.open("POST", "php/upload.php");
-  xhr.upload.addEventListener("progress", ({loaded, total}) => {
-    let fileLoaded = Math.floor((loaded / total) * 100);
-    let fileTotal = Math.floor(total / 1000);
-    let fileSize = (fileTotal < 1024) ? fileTotal + " KB" : (loaded / (1024 * 1024)).toFixed(2) + " MB";
-
-    let progressHTML = `<li class="row">
+const form=document.querySelector("form"),fileInput=document.querySelector(".file-input"),progressArea=document.querySelector(".progress-area"),uploadedArea=document.querySelector(".uploaded-area");function uploadFile(e,s){let a=new XMLHttpRequest;a.open("POST","php/upload.php"),a.upload.addEventListener("progress",({loaded:a,total:l})=>{let i=Math.floor(a/l*100),r=Math.floor(l/1e3),o=r<1024?r+" KB":(a/1048576).toFixed(2)+" MB",n=`<li class="row">
                           <i class="fas fa-file-alt"></i>
                           <div class="content">
                             <div class="details">
-                              <span class="name">${name} • Uploading</span>
-                              <span class="percent">${fileLoaded}%</span>
+                              <span class="name">${e} • Uploading</span>
+                              <span class="percent">${i}%</span>
                             </div>
                             <div class="progress-bar">
-                              <div class="progress" style="width: ${fileLoaded}%"></div>
+                              <div class="progress" style="width: ${i}%"></div>
                             </div>
                           </div>
-                        </li>`;
-    uploadedArea.classList.add("onprogress");
-    progressArea.innerHTML = progressHTML;
-
-    if (loaded === total) {
-      progressArea.innerHTML = "";
-      let uploadedHTML = `<li class="row">
+                        </li>`;if(uploadedArea.classList.add("onprogress"),progressArea.innerHTML=n,a===l){progressArea.innerHTML="";let t=`<li class="row">
                             <div class="content upload">
                               <div class="thumbnail-container">
-                                <img src="${thumbnail}" alt="${name}" class="thumbnail">
+                                <img src="${s}" alt="${e}" class="thumbnail">
                                 <div class="remove-file" onclick="removeFile(this)"><i class="fas fa-times-circle"></i></div>
                               </div>
                               <div class="details">
-                                <span class="name">${name} • Uploaded</span>
-                                <span class="size">${fileSize}</span>
+                                <span class="name">${e} • Uploaded</span>
+                                <span class="size">${o}</span>
                               </div>
                             </div>
-                          </li>`;
-      uploadedArea.classList.remove("onprogress");
-      uploadedArea.insertAdjacentHTML("afterbegin", uploadedHTML);
-    }
-  });
-  let data = new FormData(form);
-  xhr.send(data);
-}
-
-function removeFile(el) {
-  el.closest('.row').remove();
-}
+                          </li>`;uploadedArea.classList.remove("onprogress"),uploadedArea.insertAdjacentHTML("afterbegin",t)}});let l=new FormData(form);a.send(l)}function removeFile(e){e.closest(".row").remove()}form.addEventListener("click",()=>{fileInput.click()}),fileInput.onchange=({target:e})=>{let s=e.files[0];if(s){let a=new FileReader;a.readAsDataURL(s),a.onload=function(e){let a=e.target.result;uploadFile(s.name,a)}}};
